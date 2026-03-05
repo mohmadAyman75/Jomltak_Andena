@@ -13,8 +13,8 @@ const token = () => localStorage.getItem('token');
 // ══════════════════════════════════════════════════
 function SupplierSidebar({ view, setView, supplier, onLogout }) {
   const navItems = [
-    { key: 'orders',   icon: '📦', label: 'الطلبات الواردة' },
-    { key: 'financial', icon: '💰', label: 'السجل المالي'  },
+    { key: 'orders', icon: '📦', label: 'الطلبات الواردة' },
+    { key: 'financial', icon: '💰', label: 'السجل المالي' },
     { key: 'settings', icon: '⚙️', label: 'إعدادات الحساب' },
   ];
 
@@ -52,17 +52,17 @@ function SupplierSidebar({ view, setView, supplier, onLogout }) {
 //  Orders View
 // ══════════════════════════════════════════════════
 const STATUS_LABELS = {
-  admin_approved:    { label: 'بانتظار القبول', color: '#F59E0B', bg: '#FFFBEB' },
-  supplier_approved: { label: 'مقبول',          color: '#10B981', bg: '#ECFDF5' },
-  shipped:           { label: 'تم الشحن',       color: '#3B82F6', bg: '#EFF6FF' },
-  delivered:         { label: 'تم التسليم',     color: '#6B7280', bg: '#F9FAFB' },
-  rejected:          { label: 'مرفوض',          color: '#EF4444', bg: '#FEF2F2' },
+  admin_approved: { label: 'بانتظار القبول', color: '#F59E0B', bg: '#FFFBEB' },
+  supplier_approved: { label: 'مقبول', color: '#10B981', bg: '#ECFDF5' },
+  shipped: { label: 'تم الشحن', color: '#3B82F6', bg: '#EFF6FF' },
+  delivered: { label: 'تم التسليم', color: '#6B7280', bg: '#F9FAFB' },
+  rejected: { label: 'مرفوض', color: '#EF4444', bg: '#FEF2F2' },
 };
 
 function OrdersView() {
-  const [orders,   setOrders]   = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [filter,   setFilter]   = useState('all');
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
   const [selected, setSelected] = useState(null);
   const [actLoading, setActLoading] = useState(false);
 
@@ -72,13 +72,14 @@ function OrdersView() {
       const url = filter === 'all'
         ? `${API}/api/supplier/orders`
         : `${API}/api/supplier/orders?status=${filter}`;
-      const res  = await fetch(url, { headers: { Authorization: `Bearer ${token()}` } });
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token()}` } });
       const data = await res.json();
       setOrders(data.orders || []);
-    } catch {}
+    } catch { }
     finally { setLoading(false); }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchOrders(); }, [filter]);
 
   const handleAction = async (orderId, action) => {
@@ -89,17 +90,17 @@ function OrdersView() {
         headers: { Authorization: `Bearer ${token()}` },
       });
       if (res.ok) { setSelected(null); fetchOrders(); }
-    } catch {}
+    } catch { }
     finally { setActLoading(false); }
   };
 
   const filters = [
-    { key: 'all',              label: 'الكل' },
-    { key: 'admin_approved',   label: 'انتظار القبول' },
+    { key: 'all', label: 'الكل' },
+    { key: 'admin_approved', label: 'انتظار القبول' },
     { key: 'supplier_approved', label: 'مقبول' },
-    { key: 'shipped',          label: 'تم الشحن' },
-    { key: 'delivered',        label: 'تم التسليم' },
-    { key: 'rejected',         label: 'مرفوض' },
+    { key: 'shipped', label: 'تم الشحن' },
+    { key: 'delivered', label: 'تم التسليم' },
+    { key: 'rejected', label: 'مرفوض' },
   ];
 
   return (
@@ -227,32 +228,32 @@ function OrdersView() {
 //  Financial View
 // ══════════════════════════════════════════════════
 function FinancialView() {
-  const [stats,   setStats]   = useState(null);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [months,  setMonths]  = useState(1);
+  const [months, setMonths] = useState(1);
 
   useEffect(() => {
     const fetchStats = async () => {
       setLoading(true);
       try {
-        const res  = await fetch(`${API}/api/supplier/stats?months=${months}`, {
+        const res = await fetch(`${API}/api/supplier/stats?months=${months}`, {
           headers: { Authorization: `Bearer ${token()}` }
         });
         const data = await res.json();
         setStats(data);
-      } catch {}
+      } catch { }
       finally { setLoading(false); }
     };
     fetchStats();
   }, [months]);
 
   const cards = stats ? [
-    { icon: '📥', label: 'إجمالي الطلبات الواردة', value: stats.stats.totalIncoming,    color: '#3B82F6' },
-    { icon: '✅', label: 'تم التسليم',              value: stats.stats.totalDelivered,   color: '#10B981' },
-    { icon: '⏳', label: 'في الانتظار',             value: stats.stats.pendingApproval,  color: '#F59E0B' },
-    { icon: '🔄', label: 'قيد التنفيذ',             value: stats.stats.inProgress,       color: '#8B5CF6' },
-    { icon: '❌', label: 'مرفوض',                   value: stats.stats.rejected,         color: '#EF4444' },
-    { icon: '💰', label: 'الإيرادات',               value: `${stats.stats.totalRevenue?.toLocaleString('ar-EG')} ج`, color: '#059669' },
+    { icon: '📥', label: 'إجمالي الطلبات الواردة', value: stats.stats.totalIncoming, color: '#3B82F6' },
+    { icon: '✅', label: 'تم التسليم', value: stats.stats.totalDelivered, color: '#10B981' },
+    { icon: '⏳', label: 'في الانتظار', value: stats.stats.pendingApproval, color: '#F59E0B' },
+    { icon: '🔄', label: 'قيد التنفيذ', value: stats.stats.inProgress, color: '#8B5CF6' },
+    { icon: '❌', label: 'مرفوض', value: stats.stats.rejected, color: '#EF4444' },
+    { icon: '💰', label: 'الإيرادات', value: `${stats.stats.totalRevenue?.toLocaleString('ar-EG')} ج`, color: '#059669' },
   ] : [];
 
   return (
@@ -260,7 +261,7 @@ function FinancialView() {
       <div className="sd-section-header">
         <h2 className="sd-section-title">💰 السجل المالي</h2>
         <div className="sd-period-tabs">
-          {[1,2,3].map(m => (
+          {[1, 2, 3].map(m => (
             <button
               key={m}
               className={`sd-tab ${months === m ? 'sd-tab-active' : ''}`}
@@ -316,27 +317,27 @@ function FinancialView() {
 //  Settings View
 // ══════════════════════════════════════════════════
 function SettingsView({ supplier, onUpdated }) {
-  const [form,    setForm]    = useState({
-    name:    supplier?.name    || '',
+  const [form, setForm] = useState({
+    name: supplier?.name || '',
     company: supplier?.company || '',
-    notes:   supplier?.notes   || '',
+    notes: supplier?.notes || '',
   });
-  const [pwForm,   setPwForm]   = useState({ current: '', newPw: '', confirm: '' });
-  const [saving,   setSaving]   = useState(false);
+  const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' });
+  const [saving, setSaving] = useState(false);
   const [pwSaving, setPwSaving] = useState(false);
-  const [msg,      setMsg]      = useState('');
-  const [pwMsg,    setPwMsg]    = useState('');
+  const [msg, setMsg] = useState('');
+  const [pwMsg, setPwMsg] = useState('');
 
-  const set   = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const setPw = (k, v) => setPwForm(f => ({ ...f, [k]: v }));
 
   const handleSaveProfile = async () => {
     setSaving(true); setMsg('');
     try {
-      const res  = await fetch(`${API}/api/supplier/me/update`, {
-        method:  'PUT',
+      const res = await fetch(`${API}/api/supplier/me/update`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
-        body:    JSON.stringify({ name: form.name, company: form.company, notes: form.notes }),
+        body: JSON.stringify({ name: form.name, company: form.company, notes: form.notes }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
@@ -351,10 +352,10 @@ function SettingsView({ supplier, onUpdated }) {
     if (pwForm.newPw.length < 6) return setPwMsg('⚠️ كلمة المرور يجب أن تكون 6 خانات على الأقل');
     setPwSaving(true); setPwMsg('');
     try {
-      const res  = await fetch(`${API}/api/supplier/me/password`, {
-        method:  'PATCH',
+      const res = await fetch(`${API}/api/supplier/me/password`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
-        body:    JSON.stringify({ currentPassword: pwForm.current, newPassword: pwForm.newPw }),
+        body: JSON.stringify({ currentPassword: pwForm.current, newPassword: pwForm.newPw }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
@@ -425,7 +426,7 @@ function SettingsView({ supplier, onUpdated }) {
 //  Main Dashboard
 // ══════════════════════════════════════════════════
 export default function SupplierDashboard() {
-  const [view,     setView]     = useState('orders');
+  const [view, setView] = useState('orders');
   const [supplier, setSupplier] = useState(null);
 
   const navigate = (path) => { window.location.href = path; };
@@ -436,7 +437,7 @@ export default function SupplierDashboard() {
 
     const fetchMe = async () => {
       try {
-        const res  = await fetch(`${API}/api/supplier/me`, {
+        const res = await fetch(`${API}/api/supplier/me`, {
           headers: { Authorization: `Bearer ${token()}` }
         });
         const data = await res.json();
@@ -456,7 +457,7 @@ export default function SupplierDashboard() {
 
   return (
     <>
-      <HeroSection showExtra={false}/>
+      <HeroSection showExtra={false} />
       <div className="sd-layout">
         <SupplierSidebar
           view={view}
@@ -465,9 +466,9 @@ export default function SupplierDashboard() {
           onLogout={handleLogout}
         />
         <main className="sd-main">
-          {view === 'orders'    && <OrdersView />}
+          {view === 'orders' && <OrdersView />}
           {view === 'financial' && <FinancialView />}
-          {view === 'settings'  && <SettingsView supplier={supplier} onUpdated={() => {}} />}
+          {view === 'settings' && <SettingsView supplier={supplier} onUpdated={() => { }} />}
         </main>
       </div>
       <Footer />
